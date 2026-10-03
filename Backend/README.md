@@ -7,7 +7,7 @@ A Python 3.11+ FastAPI backend for a website where founders pitch a business and
 From this workspace:
 
 ```powershell
-cd Coding/Backend
+cd Backend
 py -m venv .venv
 .venv/Scripts/python.exe -m pip install -r requirements-dev.txt
 Copy-Item .env.example .env
