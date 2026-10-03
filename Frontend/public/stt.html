@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PitchRoom Speech Test</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050505;
+      color: #f7f7f7;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 32px;
+      background:
+        radial-gradient(circle at top left, rgba(16, 185, 129, 0.2), transparent 32rem),
+        radial-gradient(circle at bottom right, rgba(6, 182, 212, 0.16), transparent 30rem),
+        #050505;
+    }
+
+    main {
+      width: min(980px, 100%);
+      display: grid;
+      gap: 18px;
+    }
+
+    .card {
+      border: 1px solid #27272a;
+      border-radius: 26px;
+      background: rgba(9, 9, 11, 0.9);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+      padding: 24px;
+    }
+
+    h1, h2 {
+      margin: 0;
+      letter-spacing: -0.04em;
+    }
+
+    h1 {
+      font-size: clamp(30px, 5vw, 54px);
+    }
+
+    p {
+      color: #a1a1aa;
+      line-height: 1.6;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      font-size: 12px;
+      color: #a1a1aa;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #27272a;
+      border-radius: 16px;
+      background: #121214;
+      color: #fff;
+      padding: 12px 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 800;
+      cursor: pointer;
+      background: #10b981;
+      color: #00110b;
+    }
+
+    button.secondary {
+      background: #18181b;
+      color: #e4e4e7;
+      border: 1px solid #27272a;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .status {
+      border: 1px solid #164e63;
+      background: rgba(8, 47, 73, 0.45);
+      color: #a5f3fc;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 13px;
+    }
+
+    .question {
+      border-left: 3px solid #06b6d4;
+      padding-left: 14px;
+      color: #f4f4f5;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 16px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card">
+      <h1>PitchRoom Speech Test</h1>
+      <p>
+        This page uses browser speech-to-text for founder answers and local browser text-to-speech for AI agent questions.
+        Start your FastAPI backend first, then create a session and answer questions by voice.
+      </p>
+      <div class="grid">
+        <label>
+          API base URL
+          <input id="api_base" value="http://localhost:8000">
+        </label>
+        <label>
+          Recognition language
+          <select id="language_select">
+            <option value="en-IN" selected>English (India)</option>
+            <option value="en-US">English (US)</option>
+            <option value="hi-IN">Hindi (India)</option>
+            <option value="gu-IN">Gujarati (India)</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Startup brief</h2>
+      <div class="grid">
+        <label>
+          Business name
+          <input id="business_name" value="WatchAI">
+        </label>
+        <label>
+          Funding ask
+          <input id="funding_ask" value="2500000">
+        </label>
+      </div>
+      <label style="margin-top: 14px;">
+        Pitch summary
+        <textarea id="pitch_summary">WatchAI connects to existing retail CCTV cameras and turns passive footage into real-time stockout, queue, and loss-prevention alerts. We sell to mid-to-large retail chains as B2B SaaS and have early pilot traction.</textarea>
+      </label>
+      <div class="actions" style="margin-top: 14px;">
+        <button id="create_session">Create session</button>
+        <button id="next_round" class="secondary" disabled>Ask AI agents</button>
+        <button id="speak_question" class="secondary" disabled>Speak question locally</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Current AI question</h2>
+      <p id="question_text" class="question">Create a session to receive the first AI investor question.</p>
+    </section>
+
+    <section class="card">
+      <h2>Founder answer</h2>
+      <label>
+        Speech transcript
+        <textarea id="convert_text" placeholder="Your speech will appear here..."></textarea>
+      </label>
+      <div class="actions" style="margin-top: 14px;">
+        <button id="click_to_record">Start recording</button>
+        <button id="submit_answer" class="secondary" disabled>Submit answer</button>
+        <button id="copy_to_clipboard" class="secondary">Copy transcript</button>
+      </div>
+      <p id="confidence_id">Confidence: 0</p>
+      <div id="status" class="status">Ready.</div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      session: null,
+      token: '',
+      currentQuestion: null,
+      recognition: null,
+      isRecording: false,
+    };
+
+    const apiBase = document.getElementById('api_base');
+    const languageSelect = document.getElementById('language_select');
+    const createSessionButton = document.getElementById('create_session');
+    const nextRoundButton = document.getElementById('next_round');
+    const speakQuestionButton = document.getElementById('speak_question');
+    const recordButton = document.getElementById('click_to_record');
+    const submitAnswerButton = document.getElementById('submit_answer');
+    const copyButton = document.getElementById('copy_to_clipboard');
+    const questionText = document.getElementById('question_text');
+    const convertText = document.getElementById('convert_text');
+    const confidence = document.getElementById('confidence_id');
+    const statusBox = document.getElementById('status');
+
+    function setStatus(message) {
+      statusBox.textContent = message;
+    }
+
+    function authHeaders() {
+      return {
+        'Content-Type': 'application/json',
+        ...(state.token ? { 'X-Session-Token': state.token } : {}),
+      };
+    }
+
+    async function request(path, options = {}) {
+      const response = await fetch(`${apiBase.value}${path}`, {
+        ...options,
+        headers: {
+          ...authHeaders(),
+          ...(options.headers || {}),
+        },
+      });
+
+      if (!response.ok) {
+        let message = `${response.status} ${response.statusText}`;
+        try {
+          const body = await response.json();
+          message = body?.error?.message || message;
+        } catch {}
+        throw new Error(message);
+      }
+
+      return response.json();
+    }
+
+    function updateQuestionFromSession(session) {
+      state.session = session;
+      const pending = session.questions.filter((question) => (
+        question.round_number === session.current_round && !question.answer
+      ));
+      state.currentQuestion = pending[0] || null;
+      questionText.textContent = state.currentQuestion
+        ? `${state.currentQuestion.agent_name}: ${state.currentQuestion.text}`
+        : 'No pending question. Ask the next round or evaluate the session.';
+      speakQuestionButton.disabled = !state.currentQuestion;
+      submitAnswerButton.disabled = !state.currentQuestion;
+      nextRoundButton.disabled = session.status !== 'ready_for_round';
+    }
+
+    function speakLocal(text) {
+      if (!('speechSynthesis' in window) || !text) {
+        setStatus('Local text-to-speech is not supported in this browser.');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    createSessionButton.addEventListener('click', async () => {
+      try {
+        setStatus('Creating backend session...');
+        const payload = {
+          business_name: document.getElementById('business_name').value || 'Untitled startup',
+          summary: document.getElementById('pitch_summary').value,
+          funding_ask: Number(document.getElementById('funding_ask').value || 0),
+          currency: 'USD',
+        };
+        const session = await request('/api/v1/sessions', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+        state.token = session.session_token;
+        updateQuestionFromSession(session);
+        nextRoundButton.disabled = false;
+        setStatus(`Session created: ${session.id}`);
+      } catch (error) {
+        setStatus(`Could not create session: ${error.message}`);
+      }
+    });
+
+    nextRoundButton.addEventListener('click', async () => {
+      if (!state.session) return;
+      try {
+        setStatus('Agents are generating questions...');
+        const session = await request(`/api/v1/sessions/${state.session.id}/rounds`, {
+          method: 'POST',
+          body: JSON.stringify({ expected_version: state.session.version }),
+        });
+        updateQuestionFromSession(session);
+        speakLocal(state.currentQuestion?.speech_text || state.currentQuestion?.text || '');
+        setStatus('Question ready.');
+      } catch (error) {
+        setStatus(`Could not get next round: ${error.message}`);
+      }
+    });
+
+    speakQuestionButton.addEventListener('click', () => {
+      speakLocal(state.currentQuestion?.speech_text || state.currentQuestion?.text || '');
+    });
+
+    submitAnswerButton.addEventListener('click', async () => {
+      if (!state.session || !state.currentQuestion || !convertText.value.trim()) return;
+      try {
+        setStatus('Submitting spoken answer...');
+        const session = await request(`/api/v1/sessions/${state.session.id}/answers`, {
+          method: 'POST',
+          body: JSON.stringify({
+            expected_version: state.session.version,
+            answers: [{
+              question_id: state.currentQuestion.id,
+              text: convertText.value.trim(),
+            }],
+          }),
+        });
+        convertText.value = '';
+        updateQuestionFromSession(session);
+        if (state.currentQuestion) {
+          speakLocal(state.currentQuestion.speech_text || state.currentQuestion.text);
+        }
+        setStatus(session.status === 'ready_for_evaluation'
+          ? 'All rounds are complete. Use the app to generate the final report.'
+          : 'Answer saved.');
+      } catch (error) {
+        setStatus(`Could not submit answer: ${error.message}`);
+      }
+    });
+
+    recordButton.addEventListener('click', () => {
+      const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!Recognition) {
+        setStatus('Speech recognition is not supported in this browser.');
+        return;
+      }
+
+      if (state.isRecording && state.recognition) {
+        state.recognition.stop();
+        return;
+      }
+
+      const recognition = new Recognition();
+      recognition.interimResults = true;
+      recognition.continuous = false;
+      recognition.lang = languageSelect.value;
+      state.recognition = recognition;
+
+      recognition.addEventListener('start', () => {
+        state.isRecording = true;
+        recordButton.textContent = 'Stop recording';
+        setStatus('Listening...');
+      });
+
+      recognition.addEventListener('end', () => {
+        state.isRecording = false;
+        recordButton.textContent = 'Start recording';
+        setStatus('Recording stopped.');
+      });
+
+      recognition.addEventListener('error', (event) => {
+        state.isRecording = false;
+        recordButton.textContent = 'Start recording';
+        setStatus(`Speech recognition error: ${event.error}`);
+      });
+
+      recognition.addEventListener('result', (event) => {
+        let transcript = '';
+        let latestConfidence = 0;
+        for (let index = event.resultIndex; index < event.results.length; index += 1) {
+          transcript += event.results[index][0].transcript;
+          latestConfidence = event.results[index][0].confidence || latestConfidence;
+        }
+        convertText.value = transcript.trim();
+        confidence.textContent = `Confidence: ${latestConfidence.toFixed(2)}`;
+      });
+
+      recognition.start();
+    });
+
+    copyButton.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(convertText.value);
+      setStatus('Transcript copied.');
+    });
+  </script>
+</body>
+</html>

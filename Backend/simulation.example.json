@@ -1,0 +1,172 @@
+{
+  "orchestrator": {
+    "enabled": true,
+    "id": "orchestrator",
+    "name": "Jordan",
+    "role": "Lead investor and panel moderator",
+    "instructions": "Coordinate the investor panel. Set a focused round objective, assign each investor a non-overlapping angle, and make sure the panel follows up on weak or unsupported claims.",
+    "model": null,
+    "temperature": 0.4,
+    "max_output_tokens": 1500
+  },
+  "agents": [
+    {
+      "id": "finance",
+      "name": "Alex",
+      "role": "Finance investor",
+      "instructions": "Challenge revenue, margins, valuation and funding assumptions.",
+      "expertise": [
+        "unit economics",
+        "cash flow",
+        "fundraising"
+      ],
+      "assertiveness": 0.7,
+      "risk_tolerance": 0.3,
+      "voting_weight": 1.0,
+      "web_access": true,
+      "model": null,
+      "temperature": 0.7,
+      "max_output_tokens": 2000
+    },
+    {
+      "id": "market",
+      "name": "Morgan",
+      "role": "Market investor",
+      "instructions": "Challenge customer demand, competition and acquisition strategy.",
+      "expertise": [
+        "market size",
+        "customer acquisition",
+        "competition"
+      ],
+      "assertiveness": 0.7,
+      "risk_tolerance": 0.5,
+      "voting_weight": 1.0,
+      "web_access": true,
+      "model": null,
+      "temperature": 0.7,
+      "max_output_tokens": 2000
+    },
+    {
+      "id": "product",
+      "name": "Sam",
+      "role": "Product investor",
+      "instructions": "Challenge differentiation, feasibility and ability to scale.",
+      "expertise": [
+        "product",
+        "technology",
+        "operations"
+      ],
+      "assertiveness": 0.7,
+      "risk_tolerance": 0.7,
+      "voting_weight": 1.0,
+      "web_access": true,
+      "model": null,
+      "temperature": 0.7,
+      "max_output_tokens": 2000
+    },
+    {
+      "id": "strategy",
+      "name": "Riley",
+      "role": "Go-to-market investor",
+      "instructions": "Challenge positioning, sales motion, partnerships and founder readiness.",
+      "expertise": [
+        "go-to-market",
+        "sales strategy",
+        "pitch clarity"
+      ],
+      "assertiveness": 0.8,
+      "risk_tolerance": 0.5,
+      "voting_weight": 1.0,
+      "web_access": true,
+      "model": null,
+      "temperature": 0.7,
+      "max_output_tokens": 2000
+    },
+    {
+      "id": "technical",
+      "name": "Taylor",
+      "role": "Technical investor",
+      "instructions": "Challenge technical feasibility, architecture, security, data strategy and build risk.",
+      "expertise": [
+        "technical feasibility",
+        "architecture",
+        "security"
+      ],
+      "assertiveness": 0.7,
+      "risk_tolerance": 0.4,
+      "voting_weight": 1.0,
+      "web_access": true,
+      "model": null,
+      "temperature": 0.7,
+      "max_output_tokens": 2000
+    },
+    {
+      "id": "market_research",
+      "name": "Casey",
+      "role": "Market research investor",
+      "instructions": "Challenge market evidence, category trends, customer segments and external proof.",
+      "expertise": [
+        "market research",
+        "industry trends",
+        "customer validation"
+      ],
+      "assertiveness": 0.8,
+      "risk_tolerance": 0.4,
+      "voting_weight": 1.0,
+      "web_access": true,
+      "model": null,
+      "temperature": 0.7,
+      "max_output_tokens": 2000
+    }
+  ],
+  "difficulty_mode": "normal",
+  "max_rounds": 3,
+  "questions_per_agent": 1,
+  "pitch_min_chars": 20,
+  "pitch_max_chars": 12000,
+  "answer_max_chars": 8000,
+  "question_max_chars": 1500,
+  "speech_text_max_chars": 2000,
+  "orchestrator_briefing_max_chars": 1200,
+  "round_analysis_text_max_chars": 1200,
+  "round_analysis_points_per_section": 3,
+  "feedback_max_chars": 6000,
+  "history_max_chars": 32000,
+  "web_research_enabled": true,
+  "web_search_results_per_agent": 3,
+  "web_context_max_chars": 4000,
+  "ai_timeout_seconds": 60.0,
+  "ai_retries": 2,
+  "retry_backoff_seconds": 1.0,
+  "score_min": 0.0,
+  "score_max": 10.0,
+  "investment_threshold": 7.0,
+  "criteria": [
+    {
+      "id": "market",
+      "name": "Market opportunity",
+      "description": "Demand and reachable customer segment",
+      "weight": 0.3
+    },
+    {
+      "id": "economics",
+      "name": "Business economics",
+      "description": "Revenue, margins and sustainable acquisition",
+      "weight": 0.3
+    },
+    {
+      "id": "product",
+      "name": "Product advantage",
+      "description": "Differentiation and defensibility",
+      "weight": 0.2
+    },
+    {
+      "id": "execution",
+      "name": "Execution",
+      "description": "Team capability and credible next steps",
+      "weight": 0.2
+    }
+  ],
+  "question_instructions": "Ask specific, constructive investor questions. Use previous answers to probe gaps; avoid repeating earlier questions.",
+  "evaluation_instructions": "Evaluate only the supplied evidence. Explain strengths, risks and practical next steps. Distinguish claims from proven facts."
+}
